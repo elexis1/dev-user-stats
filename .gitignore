@@ -1,1 +1,7 @@
+.settings
+__pycache__
 .project
+.pydevproject
+
+data/
+charts/
