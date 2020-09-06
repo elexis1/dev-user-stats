@@ -4,8 +4,20 @@ import sys
 import dateutil
 import parse_trac_ticket
 
+# IMPORTANT
+# The "review" and "rfc" keywords have (the same) special meaning.
+# Inference rules:
+# - If a keyword was removed but it hasn't been added before, it is inferred that it was added when the ticket was created.
+# - If a ticket is closed that had such a keyword, it is inferred that this keyword was removed by the one closing the ticket on that time.
+# - If a keyword is removed twice consecutively, the second removal is ignored.
+
+# 2016-05-03-QuakeNet-%230ad-dev.log
+# On this day sanderd17 removed 111 review keywords from closed tickets 
+# 08:43 < sanderd17> Anyone wondering what tickets I modified: I just removed a number of "review" tags from closed tickets.
+
+
 # Obtained via wget mirror
-directory = "/data/0ad/trac/mirror/trac.wildfiregames.com/ticket/"
+directory = "input/trac/ticket/"
 
 # Get statistics grouped per month
 date_format = "%Y-%m"
@@ -76,17 +88,13 @@ def print_review_action_stats(keyword, action):
 # This can be used to determine alias names 
 #print_users("review")
 
-sys.stdout = open('../data/trac_events.txt', 'w')
-print_events("review")
+for keyword in ["review", "rfc"]:
+	sys.stdout = open("data/trac_events.txt", 'w')
+	print_events(keyword)
 
-sys.stdout = open('../data/trac_open_review.txt', 'w')
-print_open_review_stats("review")
+	sys.stdout = open("data/trac_open_" + keyword + ".txt", 'w')
+	print_open_review_stats(keyword)
 
-sys.stdout = open('../data/trac_open_rfc.txt', 'w')
-print_open_review_stats("rfc")
-
-sys.stdout = open('../data/trac_added_reviewable_patches.txt', 'w')
-print_review_action_stats("review", "added")
-
-sys.stdout = open('../data/trac_performed_reviews.txt', 'w')
-print_review_action_stats("review", "removed")
+	for action in ["added", "removed"]:
+		sys.stdout = open("data/trac_" + action + "_" + keyword + ".txt", 'w')
+		print_review_action_stats(keyword, action)

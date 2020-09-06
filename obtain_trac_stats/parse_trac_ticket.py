@@ -5,24 +5,7 @@ import datetime
 import dateutil.parser
 import os
 import dateutil.relativedelta
-
-# TODO: This is data, not supposed to be here
-def getAlias(author):
-    if author == "Philip":
-        return "philip"
-    if author == "gallaecio":
-        return "Gallaecio"
-    if author == "Josh":
-        return "JoshuaJB"
-    if author == "Lionkanzen":
-        return "Lion_kanzen"
-    if author == "stilz_":
-        return "stilz"
-    return author 
-
-# 2016-05-03-QuakeNet-%230ad-dev.log
-# On this day sanderd17 removed 111 review keywords from closed tickets 
-# 08:43 < sanderd17> Anyone wondering what tickets I modified: I just removed a number of "review" tags from closed tickets.
+import nicknames
 
 def add_event(events, timestamp, author, ticket, action):
     events.append({
@@ -35,19 +18,9 @@ def add_event(events, timestamp, author, ticket, action):
 def parse_json(jsline, prefix):
     return json.loads(jsline[len(prefix):-1])
 
-def parse_trac_ticket_old_values(events, old_values):
-    author = getAlias(old_values["reporter"])
-    ticket = old_values["id"]
-    keywords = old_values["keywords"].split()
-    timestamp = dateutil.parser.isoparse(old_values["time"])
-
-    # The old_values keywords are wrong, see other comments in this file
-    #if "review" in keywords:
-    #    add_event(events, timestamp, author, ticket, "created review")
-
 def parse_trac_ticket_change(events, has_review, has_rfc, ticket_open, keywords, old_values, change, had_keyword_changes):
     
-    author = getAlias(change["author"])
+    author = nicknames.getAlias(change["author"])
     fields = change["fields"]
     ticket = old_values["id"]
     timestamp = datetime.datetime.fromtimestamp(change["date"] / 1000 / 1000, datetime.timezone.utc)
@@ -83,7 +56,7 @@ def parse_trac_ticket_change(events, has_review, has_rfc, ticket_open, keywords,
             # Infer "added rfc" in case a review keyword was removed but never added
             # trac data bug, (e.g. on #4242), compare with trac emails.
             if not has_rfc:
-                add_event(events, timestamp, getAlias(old_values["reporter"]), ticket, "added rfc")
+                add_event(events, timestamp, nicknames.getAlias(old_values["reporter"]), ticket, "added rfc")
                 has_rfc = True
 
             add_event(events, timestamp, author, ticket, "removed rfc")
@@ -101,7 +74,7 @@ def parse_trac_ticket_change(events, has_review, has_rfc, ticket_open, keywords,
             # Infer "added review" in case a review keyword was removed but never added
             # trac data bug, (e.g. on #4254), compare with trac emails.
             if ticket_open and not had_keyword_changes and ("review" not in new and "review" not in old_values["keywords"].split() or "review" in old):
-                add_event(events, dateutil.parser.isoparse(old_values["time"]), getAlias(old_values["reporter"]), ticket, "added review")
+                add_event(events, dateutil.parser.isoparse(old_values["time"]), nicknames.getAlias(old_values["reporter"]), ticket, "added review")
                 has_review = True
 
             # Avoid duplicate events
@@ -124,7 +97,6 @@ def parse_trac_ticket(events, file):
 
         if line.startswith(prefix_old_values):
             old_values = parse_json(line, prefix_old_values)
-            #parse_trac_ticket_old_values(events, old_values)
             ticket_open = True
             keywords = old_values["keywords"]
             had_keyword_changes = False
@@ -221,3 +193,4 @@ def count_trac(events, keyword, group_format, delta, initial_value, parse_event,
     add_count(current_time.strftime(group_format))
 
     return total_count
+
