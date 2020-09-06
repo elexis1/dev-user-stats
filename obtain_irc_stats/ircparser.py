@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os, re, sys, getopt
+import ircnicknames
 
 # Execution example --mode="chatmessages" --year=2014
 
@@ -41,6 +42,7 @@ reExclamation = '\-\!\-'
 # "userstats_total": print statistics on how many messages are sent per user
 # "userstats_daily": print statistics on how many messages are sent per user per day
 # "userstats_monthly": print statistics on how many messages are sent per user per month
+# "userstats_weekly": print statistics on how many messages are sent per user per week
 # "chatmessages": print only chat messages, useful to create wordclouds
 # "linesperlog": print number of lines per day
 # "stats_users": print monthly chat statistics per user, in a table format
@@ -64,96 +66,17 @@ totalcount = 0
 count_characters = True
 
 # these users are displayed/filtered each time a file is parsed
-filtered_users = [
-	"elexis",
-	"stan",
-	"leper",
-	"wraitii",
-	"sanderd17",
-	"Philip",
-	"trompetin17",
-	"historic_bruno",
-	"alpha123",
-	"Mythos_Ruler",
-	"Itms",
-	"Vladislav",
-	"Imarok",
-	"RedFox",
-	"Josh",
-	"Enrique",
-	"Yves",
-	"FeXoR",
-	"scythetwirler",
-	"fatherbushido",
-	"fpre",
-	"quantumstate",
-	"k776",
-	"niektb",
-	"bb",
-	"Angen",
-	"Pureon",
-	"Deiz",
-	"radagast",
-	"Freagarach",
-	"feneur",
-	"echotangoecho",
-	"vtsj",
-	"Sandarac",
-	"temple",
-	"mimo",
-	"thamlett",
-	"implodedok",
-	"LordGood",
-	"Gallaecio",
-	"causative",
-	"cc",
-	"Arthur_D",
-	"brian",
-	"Spahbod",
-	"stwf",
-	"fcxSanya",
-	"Jeru",
-	"smiley",
-	"ricotz",
-	"nani",
-	"fabio",
-	"user1",
-	"_kali",
-	"s0600204",
-	"asterix",
-	"Dunedan",
-	"Tobbi",
-	"KennyLong"
-];
-
-#filtered_users = None;
-
-filtered_users = [
-	"Angen",
-	"elexis",
-	"fatherbushido",
-	"Freagarach",
-	"Itms",
-	"leper",
-	"Mythos_Ruler",
-	"Philip",
-	"sanderd17",
-	"stan",
-	"wraitii",
-	"Vladislav"
-];
+filtered_users = None;
 
 # these users are ignored when counting the total number of lines posted
-blacklisted_users = [
-	"WildfireBot",
-	"WildfireRobot"
-];
+blacklisted_users = None
 
-def main(argv):
+def parse(filteredusers, blacklistedusers):
 
-	parseArgs(argv)
+	global fileset, root, mode, filtered_users, blacklisted_users
+	blacklisted_users = blacklistedusers
+	filtered_users = filteredusers
 
-	global fileset, root, mode
 	#parseFiles('/data/0ad/meetinglogs_repository/repository/')
 
 	if not filtered_users is None:
@@ -179,14 +102,11 @@ def printUserstats():
 	global stats_chatmessages
 
 	if filtered_users == None:
-		printedSomething = False
+		print()
 		stats = [(k, stats_chatmessages[k]) for k in sorted(stats_chatmessages, key=stats_chatmessages.get, reverse=True)]
 		for username, count in stats:
 			if count > minimum_count and (filtered_users is None or (username in filtered_users)) and (blacklisted_users is None or not (username in blacklisted_users)):
 				print(username, count)
-				printedSomething = True
-		if not printedSomething:
-			print()
 	else:
 		print(totalcount, "", end = '')
 		for username in filtered_users:
@@ -194,18 +114,7 @@ def printUserstats():
 				print(stats_chatmessages[username], "", end = '')
 			else:
 				print(0, "", end = '')
-
-
-def parseArgs(argv):
-	try:
-		opts, args = getopt.getopt(argv, "m", ["mode="])
-
-	except getopt.GetoptError:
-		print ('parser.py -m <mode>')
-		sys.exit(2)
-	for opt, arg in opts:
-		if opt == '-m':
-			mode = arg
+		print()
 
 # 12:34 <nickname> message
 # or
@@ -225,7 +134,7 @@ def parseLineTimestampChat(line):
 
 	global stats_chatmessages, totalcount, count_characters
 
-	username = getUsername(result.group(2))
+	username = ircnicknames.getUsername(result.group(2))
 
 	if count_characters:	
 		diff = len(result.group(3))
@@ -246,306 +155,6 @@ def parseLineTimestampChat(line):
 		"user": result.group(2),
 		"message": result.group(3)
 	}
-
-# TODO: should be moved to a dictionary
-# TODO: should verify each nick
-def getUsername(txt):
-
-	txt = txt.replace("@", "").strip()
-	lower = txt.lower()
-
-	if "wijit" in lower or "jason" in lower:
-		return "Wijitmaker"
-
-	if "ykkrosh" in lower or "philip" in lower:
-		return "Philip"
-
-	if "janwas" in lower or "jw" in lower or "wfg_jan" in lower: #TODO
-		return "janwas"
-
-	if "feneu" in lower or "erik" in lower:
-		return "feneur"
-
-	if "gee" == lower:
-		return "Gee"
-
-	if "acume" in lower:
-		return "Acumen"
-
-	if "matt" in lower:
-		return "Matt"
-
-	if "matei" in lower:
-		return "matei"
-
-	if "prefect" in lower:
-		return "prefect"
-
-	if "dax" in lower:
-		return "dax"
-
-	if "wildfirebot" in lower:
-		return "WildfireBot";
-
-	if "wildfirerobot" in lower:
-		return "WildfireRobot";
-
-	if "fire_g|" in lower or "firegiant" in lower or "fire_giant" in lower:
-		return "Fire_Giant"
-
-	if "brian" in lower:
-		return "brian"
-
-	if "dave" in lower:
-		return "dave"
-
-	if "svede" in lower:
-		return "svede"
-
-	if "cheez" in lower:
-		return "CheeZy"
-
-	if "mythos" in lower:
-		return "Mythos_Ruler"
-
-	if "seth" in lower:
-		return "seth"
-
-	if "bruno" in lower:
-		return "historic_bruno"
-
-	if "sander" in lower:
-		return "sanderd17"
-
-	if "josh" in lower:
-		return "Josh"
-
-	if "redfox" in lower:
-		return "RedFox"
-
-	if "vladislav" in lower:
-		return "Vladislav"
-
-	if "causative" in lower:
-		return "causative"
-
-	if "bb_" in lower or "bb1" in lower:
-		return "bb"
-
-	if "leper" in lower:
-		return "leper"
-
-	if "mimo" in lower:
-		return "mimo"
-
-	if "itms" in lower:
-		return "Itms"
-
-	if "markt" in lower:
-		return "MarkT"
-
-	if "fpre" in lower or "ffff" in lower or "fraizy" in lower or lower == "fg" or lower == "fff" or lower == "ff" or txt == "superelexis":
-		return "fpre"
-
-	if "fcxsanya" in lower:
-		return "fcxSanya"
-
-	if "bushido" in lower or "bushitodo" in lower or "abnegation" in lower:
-		return "fatherbushido"
-
-	if "enrique" in lower:
-		return "Enrique"
-
-	if "yves" in lower:
-		return "Yves"
-
-	if "scythetwirler" in lower or "scytheswirler" in lower or "scythewhirler" in lower:
-		return "scythetwirler"
-
-	if "stan" in lower:
-		return "stan"
-
-	if "fabio" in lower:
-		return "fabio"
-
-	if "wraitii" in lower:
-		return "wraitii"
-
-	if "fexor" in lower:
-		return "FeXoR"
-
-	if "smiley" in lower:
-		return "smiley"
-
-	if "elexis" in lower:
-		return "elexis"
-
-	if "cc__" in lower or "cc_laptop" in lower or lower == "cc_" or "cc_1" == lower:
-		return "cc"
-
-	if "angen" in lower and not "dvangennip" in lower:
-		return "Angen"
-
-	if "k776" in lower:
-		return "k776"
-
-	if "trompeti" in lower or "tromeptin17" in lower:
-		return "trompetin17"
-
-	if "dunedan" in lower:
-		return "Dunedan"
-
-	if "temple" in lower:
-		return "temple"
-
-	if "telaviv" not in lower and "aviv" in lower or "jeru" in lower:
-		return "Jeru"
-
-	if "niektb" in lower:
-		return "niektb"
-
-	if "imarok" in lower:
-		return "Imarok"
-
-	if "gallaecio" in lower:
-		return "Gallaecio"
-
-	if "kimball" in lower:
-		return "Kimball"
-
-	if "arthur_d" in lower:
-		return "Arthur_D"
-
-	if "grugnas" in lower:
-		return "Grugnas"
-
-	if "theshadow" in lower:
-		return "theShadow"
-
-	if "nani0" in lower:
-		return "nani"
-
-	if "kennylong" in lower or "chakakhan" in lower:
-		return "KennyLong"
-
-	if "thamlett" in lower:
-		return "thamlett"
-
-	if "alpha123" in lower:
-		return "alpha123"
-
-	if txt == "GK-Daniel" or txt == "GKDaniel" or txt == "GK_Daniel":
-		return "alpha123"
-
-	if "safa" in lower:
-		return "Safa_[A_boy]"
-
-	if "eihrul" in lower:
-		return "eihrul"
-
-	if "kali" in lower:
-		return "_kali"
-
-	if "sighvatr" in lower:
-		return "Sighvatr"
-
-	if "igor" in lower:
-		return "igor"
-
-	if "agentx" in lower:
-		return "agentx"
-
-	if "badmadblacksad" in lower:
-		return "Badmadblacksad"
-
-	if "bichtiades" in lower:
-		return "Bichtiades"
-
-	if "dalerank" in lower:
-		return "Dalerank"
-
-	if "erraunt" in lower:
-		return "erraunt"
-
-	if "evans" in lower:
-		return "evans"
-
-	if txt == "Gusse":
-		return "Gussebb"
-
-	if txt == "HenryJia":
-		return "Henry_Jia_T60"
-
-	if txt == "Jagst3r21_":
-		return "Jagst3r21"
-
-	if "infyquest" in lower:
-		return "infyquest"
-
-	if "mfmachado" in lower:
-		return "mfmachado"
-
-	if "nylki" in lower:
-		return "nylki"
-
-	if "quantumstate" in lower:
-		return "quantumstate"
-
-	if "rjs23" in lower:
-		return "rjs23"
-
-	if "santa_" in lower:
-		return "santa_"
-
-	if "spahbod" in lower:
-		return "Spahbod"
-
-	if "stwf" in lower:
-		return "stwf"
-
-	if "trajan34" in lower:
-		return "trajan34"
-
-	if "wacko" in lower:
-		return "wacko"
-
-	if "xeramon" in lower:
-		return "Xeramon"
-
-	if "zaggy" in lower:
-		return "Zaggy1024"
-
-	if "amish" in lower:
-		return "amish"
-
-	if "alex|d-guy" in lower:
-		return "alex|D-Guy"
-
-	if "cygal" in lower:
-		return "cygal"
-
-	if txt == "rada"  or txt == "radagast" or txt == "rada_":
-		return "radagast"
-
-	if "skhorn" in lower:
-		return "skhorn"
-
-	if "keenehteek" in lower:
-		return "keenehteek"
-
-	# not sure if this is the same as GK-Daniel
-	if txt == "Daniel_":
-		return "Daniel_"
-
-	if txt == "prod_":
-		return "prod"
-
-	if txt == "ffm_":
-		return "ffm"
-
-	#mark____
-
-	return txt.strip()
 
 # 12:34 <nickname>
 def parseLineTimestampEmptyChat(line):
@@ -751,7 +360,7 @@ def parseLineNoTimestampChat(line):
 		return None
 
 	global stats_chatmessages, totalcount
-	username = getUsername(result.group(1))
+	username = ircnicknames.getUsername(result.group(1))
 	
 	diff = 1
 	stats_chatmessages[username] = stats_chatmessages[username] + diff if username in stats_chatmessages else diff
@@ -928,16 +537,16 @@ def parseFile(file):
 
 	qbfile.close()
 
-	if mode == "userstats_daily":
-		print(file)
-		printUserstats()
-
-	elif mode == "linesperlog":
+	if mode == "linesperlog":
 		print(totalcount, "%", file)
 
 def parseFiles(path):
+
 	global stats_lineformat, filtered_year, filtered_dev_channel, stats_chatmessages, totalcount;
+	
 	last_month = None
+	last_week = None
+
 	for root, directory, files in os.walk(path):
 		directory.sort()
 		files.sort()
@@ -961,6 +570,11 @@ def parseFiles(path):
 			print(file[:10], stats_lineformat[0])
 			'''
 
+			# print stats per day
+			if mode == "userstats_daily":
+				print(file[:10], "", end = '')
+				printUserstats()
+
 			# print stats per month
 			if last_month is None:
 				last_month = file[:7]
@@ -970,7 +584,6 @@ def parseFiles(path):
 				if mode == "userstats_monthly":
 					print(last_month, "", end = '')
 					printUserstats()
-					print()
 
 					stats_chatmessages = {}
 					totalcount = 0;
@@ -978,6 +591,3 @@ def parseFiles(path):
 				stats_lineformat = [0] * len(lineParsers)
 
 			parseFile(os.path.join(root, file))
-
-if __name__ == "__main__":
-	main(sys.argv[1:])

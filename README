@@ -1,0 +1,48 @@
+These scripts generate user statistics for software development platforms such as git, trac, phabricator and irc.
+
+Requirements:
+
+	git:
+		To generate git commit statistics, one needs a git clone at:
+			input/git/
+
+	trac:
+		To generate trac statistics, one needs a wget mirror of a trac instance, at least of each ticket html:
+			input/trac/ticket/X.html
+
+	irc:
+		To generate chat statistics, one needs an irclogs folder in irssi chatlog format:
+			input/irc/year/year-month/
+
+	events:
+		To have custom events (date + label pair) in charts, add this file (see input/events_example.json):
+			input/events.json
+
+	charts:
+		python3
+		matplotlib module
+
+Statistics generation (txt files):
+
+	git:
+		Adapt the git arguments in the script files.
+		Currently only the month data is used for charts.
+
+			obtain_git_stats/git_log_month.sh > data/git_month.txt
+			obtain_git_stats/git_log_day.sh > data/git_day.txt
+			obtain_git_stats/git_log_year.sh > data/git_year.txt
+
+	trac:
+		To compute the statistics of trac, run this command:
+			python3 obtain_trac_stats/parse_trac_tickets.py
+
+		This generates several files indicating how often individual users added or removed the "review" or "rfc" keyword and
+		how many tickets existed at a given month that had these keywords.
+
+	irc:
+		To compute the irc chat statistics per user per month, edit the wfgparser.py user list and run
+		python3 obtain_irc_stats/wfgparser.py > data/irc_month.txt
+
+To generate the charts:
+	python3 plot.py
+
