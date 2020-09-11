@@ -30,9 +30,7 @@ Statistics generation (txt files):
 		Adapt the git arguments in the script files.
 		Currently only the month data is used for charts.
 
-			obtain_git_stats/git_log_month.sh > data/git_month.txt
-			obtain_git_stats/git_log_day.sh > data/git_day.txt
-			obtain_git_stats/git_log_year.sh > data/git_year.txt
+			obtain_git_stats/git_stats.sh
 
 	trac:
 		To compute the statistics of trac, run this command:
