@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 def ircnick_to_tracauthor(username):
 
     if username == "Mythos_Ruler":

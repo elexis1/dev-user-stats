@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 def getUsername(txt):
     txt = txt.strip()
     alias = getAlias(txt)

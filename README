@@ -18,9 +18,11 @@ Requirements:
 		To have custom events (date + label pair) in charts, add this file (see input/events_example.json):
 			input/events.json
 
-	charts:
+	software:
 		python3
 		matplotlib module
+		date
+		sort
 
 Statistics generation (txt files):
 
@@ -45,4 +47,3 @@ Statistics generation (txt files):
 
 To generate the charts:
 	python3 plot.py
-

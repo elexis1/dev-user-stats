@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 def getAlias(author):
@@ -13,4 +13,3 @@ def getAlias(author):
     if author == "stilz_":
         return "stilz"
     return author 
-

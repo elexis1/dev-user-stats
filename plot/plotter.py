@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import plot.plot_events
 import plot.plot_commit
 import plot.plot_irc

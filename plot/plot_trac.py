@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import dateutil
 import datetime
 import plot.trac_nicknames

@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import sys, ircparser
 
 # These users have been around significantly long enough to be counted as part of the relevant community
