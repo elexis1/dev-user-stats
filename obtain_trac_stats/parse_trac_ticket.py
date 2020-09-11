@@ -4,7 +4,6 @@ import json
 import datetime
 import dateutil.parser
 import os
-import dateutil.relativedelta
 import nicknames
 
 def add_event(events, timestamp, author, ticket, action):

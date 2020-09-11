@@ -17,12 +17,14 @@ import parse_trac_ticket
 
 
 # Obtained via wget mirror
-directory = "input/trac/ticket/"
+input_directory = "input/trac/ticket/"
+
+output_directory = "data/"
 
 # Get statistics grouped per month
 date_format = "%Y-%m"
 
-events = parse_trac_ticket.sort_trac_events(parse_trac_ticket.parse_trac_tickets(directory), "time")
+events = parse_trac_ticket.sort_trac_events(parse_trac_ticket.parse_trac_tickets(input_directory), "time")
 
 def format_date(event):
     return event["time"].strftime("%Y-%m-%d %H:%M:%S");
@@ -57,7 +59,7 @@ def consistency_check(keyword):
     last_ticket = 0
     count = 0
 
-    events = parse_trac_ticket.sort_trac_events(parse_trac_ticket.parse_trac_tickets(directory), "ticket")
+    events = parse_trac_ticket.sort_trac_events(parse_trac_ticket.parse_trac_tickets(input_directory), "ticket")
 
     for event in events:
         if last_ticket != event["ticket"]:
@@ -89,12 +91,12 @@ def print_review_action_stats(keyword, action):
 #print_users("review")
 
 for keyword in ["review", "rfc"]:
-	sys.stdout = open("data/trac_events.txt", 'w')
+	sys.stdout = open(output_directory + "trac_events_" + keyword + ".txt", 'w')
 	print_events(keyword)
 
-	sys.stdout = open("data/trac_open_" + keyword + ".txt", 'w')
+	sys.stdout = open(output_directory + "trac_open_" + keyword + ".txt", 'w')
 	print_open_review_stats(keyword)
 
 	for action in ["added", "removed"]:
-		sys.stdout = open("data/trac_" + action + "_" + keyword + ".txt", 'w')
+		sys.stdout = open(output_directory + "trac_" + action + "_" + keyword + ".txt", 'w')
 		print_review_action_stats(keyword, action)
