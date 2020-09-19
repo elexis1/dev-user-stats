@@ -18,6 +18,10 @@ Requirements:
 		To have custom events (date + label pair) in charts, add this file (see input/events_example.json):
 			input/events.json
 
+    phabricator:
+        To create phabricator statistics:
+            Register a Conduit API token at https://phabricator-instance.com/settings/user/yourusername/page/apitokens/
+
 	software:
 		python3
 		matplotlib module

@@ -1,0 +1,6 @@
+{
+    "server": "my-server.com",
+    "token": "api-12345678901234567890123456789",
+    "acceptInvalidSSLCert": false,
+    "timeout": 40 
+}
