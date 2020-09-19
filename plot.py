@@ -25,17 +25,17 @@ figsize = [25, 15]
 dpi = 100
 min_year = 2009
 
-with open(data_directory + "git_month.txt") as f:
+with open(data_directory + "git/git_month.txt") as f:
     commitlines = f.readlines()
 (commit_usernames, commit_values) = plot.plot_commit.parse_commit_stats(commitlines, min_year)
 
-with open(data_directory + "irc_month.txt") as f:
+with open(data_directory + "irc/irc_month.txt") as f:
     chatlines = f.readlines()
 (chat_usernames, chat_values) = plot.plot_irc.parse_irc_stats(chatlines)
 
 trac_values = {
-    "actions": plot.plot_trac.parse_trac_actions(data_directory, min_year, ["review", "rfc"], ["added", "removed"]),
-    "open": plot.plot_trac.parse_trac_open(data_directory, min_year, ["review", "rfc"])
+    "actions": plot.plot_trac.parse_trac_actions(data_directory + "trac/", min_year, ["review", "rfc"], ["added", "removed"]),
+    "open": plot.plot_trac.parse_trac_open(data_directory + "trac/", min_year, ["review", "rfc"])
 }
 
 plot.plot_trac.print_trac_userstats(trac_values["actions"], ["combined"], ["added", "removed"])

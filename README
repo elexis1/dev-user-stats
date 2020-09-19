@@ -41,7 +41,7 @@ Statistics generation (txt files):
 
 	irc:
 		To compute the irc chat statistics per user per month, edit the wfgparser.py user list and run
-		python3 obtain_irc_stats/wfgparser.py > data/irc_month.txt
+		python3 obtain_irc_stats/wfgparser.py > data/irc/irc_month.txt
 
 To generate the charts:
 	python3 plot.py

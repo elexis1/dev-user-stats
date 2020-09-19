@@ -20,7 +20,7 @@ import parse_trac_ticket
 # Obtained via wget mirror
 input_directory = "input/trac/ticket/"
 
-output_directory = "data/"
+output_directory = "data/trac/"
 
 # Get statistics grouped per month
 date_format = "%Y-%m"
@@ -92,7 +92,9 @@ def print_review_action_stats(keyword, action):
 #print_users("review")
 
 for keyword in ["review", "rfc"]:
+	os.makedirs(output_directory)
 	sys.stdout = open(output_directory + "trac_events_" + keyword + ".txt", 'w')
+
 	print_events(keyword)
 
 	sys.stdout = open(output_directory + "trac_open_" + keyword + ".txt", 'w')
