@@ -38,7 +38,7 @@ trac_values = {
     "open": plot.plot_trac.parse_trac_open(data_directory + "trac/", min_year, ["review", "rfc"])
 }
 
-plot.plot_trac.print_trac_userstats(trac_values["actions"], ["combined"], ["added", "removed"])
+#plot.plot_trac.print_trac_userstats(trac_values["actions"], ["combined"], ["added", "removed"])
 
 with open('input/events.json') as json_file:
     events = json.load(json_file)
@@ -56,8 +56,6 @@ try:
     os.mkdir(out_directory)
 except:
     pass
-
-chat_usernames = ["historic_bruno"]
 
 for (print_chat, print_commit, print_trac) in [(True, True, True)]:#, (True, False), (False, True)]:
     # Plot one graph per user:
