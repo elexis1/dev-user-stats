@@ -43,12 +43,14 @@ phabricator_parser.load_conduit_API(config_file)
 #phabricator_parser.download_all_transactions(feed_directory, transaction_directory, sleep_time_transaction, transaction_limit)
 #phabricator_parser.download_all_objects(feed_directory, objects_filename, sleep_time_object, object_limit)
 #phabricator_parser.download_all_authors(feed_directory, transaction_directory, author_directory, True)
-phabricator_parser.download_all_commits(commit_directory, sleep_time_commit, commits_limit)
+#phabricator_parser.download_all_commits(commit_directory, sleep_time_commit, commits_limit)
 
 # TODO: Download all commits using diffusion.commit.search, download authors therein, so that we can print authors of concerns
 
 # PRINTING TAKS
-#objects = phabricator_parser.load_objects(objects_filename)
-#authors = phabricator_parser.load_authors(author_directory)
+objects = phabricator_parser.load_objects(objects_filename)
+authors = phabricator_parser.load_authors(author_directory)
+ignored_authors = ["Vulcan"]
 #phabricator_printer.print_all_objects("concern", transaction_directory, objects, authors, datetime_format)
-#phabricator_printer.print_concern_stats(transaction_directory, objects, authors, day_format)
+#phabricator_printer.print_all_concerns(transaction_directory, objects, authors, day_format)
+phabricator_printer.print_all_comments(transaction_directory, objects, authors, ignored_authors, day_format)

@@ -30,7 +30,7 @@ def print_concern(object, transactions, transaction, authors, authorName, object
     return authorName + " raised a concern on " + objectName
 
 def print_comment(object, transactions, transaction, authors, authorName, objectName):
-    return authorName + " added a comment to " + objectName
+    return authorName + " added a comment to " + objectName + " " + transaction
 
 def print_create(object, transactions, transaction, authors, authorName, objectName):
     return authorName + " created " + objectName
@@ -160,20 +160,7 @@ def print_object_transaction(object, transactions, transaction, authors, date_fo
         object["name"],
         transaction_strings[type](object, transactions, transaction, authors, authorName, objectName))
 
-def print_all_objects(type, transaction_directory, objects, authors, date_format):
-
-    for object_phid in objects:
-        object = objects[object_phid]
-        #print(object["uri"], object["fullName"])
-
-        with open(transaction_directory + object_phid + ".json") as transaction_json_string:
-            transactions = json.load(transaction_json_string)
-
-            for transaction in transactions:
-                if transaction["type"] == type:
-                    print_object_transaction(object, transactions, transaction, authors, date_format)
-
-def print_concern_stats(transaction_directory, objects, authors, date_format):
+def for_all_transaction(transaction_directory, objects, func):
 
     for object_phid in objects:
         object = objects[object_phid]
@@ -187,19 +174,57 @@ def print_concern_stats(transaction_directory, objects, authors, date_format):
 
         with open(filename) as transaction_json_string:
             transactions = json.load(transaction_json_string)
+            func(object, transactions)
 
-            for transaction in transactions:
-                author_phid = transaction["authorPHID"]
-                
-                if author_phid in authors:
-                    author = authors[author_phid]
-                else:
-                    print("Unknown author " + author_phid + " in transaction", transaction, file=sys.stderr)
-                    continue
+def print_objects_of_type(objects, transactions, type, authors, date_format):
+    for transaction in transactions:
+        if transaction["type"] == type:
+            print_object_transaction(object, transactions, transaction, authors, date_format)
 
-                concernAuthorName = author["name"]
+def print_object_concerns(object, transactions):
+    for transaction in transactions:
+        author_phid = transaction["authorPHID"]
+        
+        if author_phid in authors:
+            author = authors[author_phid]
+        else:
+            print("Unknown author " + author_phid + " in transaction", transaction, file=sys.stderr)
+            continue
 
-                if transaction["type"] == "concern":
-                    concernDate = get_date_formatted(transaction["dateCreated"], date_format)
-                    committerName = authors[transactions[0]["authorPHID"]]["name"]
-                    print(concernDate, committerName, concernAuthorName, object["name"])
+        concernAuthorName = author["name"]
+
+        if transaction["type"] == "concern":
+            concernDate = get_date_formatted(transaction["dateCreated"], date_format)
+            committerName = authors[transactions[0]["authorPHID"]]["name"]
+            print(concernDate, committerName, concernAuthorName, object["name"])
+
+def print_object_comments(object, transactions, authors, ignored_authors, date_format):
+    for transaction in transactions:
+        author_phid = transaction["authorPHID"]
+        
+        if author_phid in authors:
+            author = authors[author_phid]
+        else:
+            print("Unknown author " + author_phid + " in transaction", transaction, file=sys.stderr)
+            continue
+
+        commentAuthorName = author["name"]
+        if commentAuthorName in ignored_authors:
+            continue
+
+        if transaction["type"] == "comment":
+            commentDate = get_date_formatted(transaction["dateCreated"], date_format)
+            for comment in transaction["comments"]:
+                print(commentDate, object["name"], commentAuthorName, comment["content"]["raw"])
+
+def print_all_concerns(transaction_directory, objects, authors, date_format):
+    for_all_transaction(
+        transaction_directory,
+        objects,
+        lambda object, transactions : print_object_concerns(object, transactions, authors, ignored_authors, date_format))
+
+def print_all_comments(transaction_directory, objects, authors, ignored_authors, date_format):
+    for_all_transaction(
+        transaction_directory,
+        objects,
+        lambda object, transactions : print_object_comments(object, transactions, authors, ignored_authors, date_format))
