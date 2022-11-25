@@ -49,3 +49,7 @@ Statistics generation (txt files):
 
 To generate the charts:
 	python3 plot.py
+
+---
+
+macOS: used `gdate` --> see #1
